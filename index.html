@@ -149,6 +149,13 @@
   .stat { text-align: center; min-width: 110px; }
   .stat .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-dim); margin-bottom: 7px; }
   .stat .value { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 20px; color: var(--text); }
+  .wk {
+    font-family: var(--font-sans);
+    font-size: 0.62em;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-dim);
+  }
 
   .next-line { text-align: center; color: var(--text-dim); font-size: 13.5px; margin-bottom: 30px; line-height: 1.6; }
   .next-line strong { color: var(--accent); font-weight: 600; }
@@ -259,7 +266,13 @@
     return new Date(y, m - 1, d);
   }
   function fmt(d) {
-    return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    return d.toLocaleDateString("en-US", { month: "short", day: "2-digit" });
+  }
+  function fmtWeekday(d) {
+    return d.toLocaleDateString("en-US", { weekday: "short" });
+  }
+  function fmtFull(d) {
+    return '<span class="wk">' + fmtWeekday(d) + '</span> ' + fmt(d);
   }
 
   const evs = events.map(e => ({ ...e, startD: toDate(e.start), endD: toDate(e.end) }));
@@ -284,17 +297,17 @@
     heroText = current.location;
     kickerEl.textContent = "Right now";
     statsHtml =
-      '<div class="stat"><div class="label">Arrived</div><div class="value">' + fmt(current.startD) + '</div></div>' +
-      '<div class="stat"><div class="label">Departs</div><div class="value">' + fmt(current.endD) + '</div></div>';
+      '<div class="stat"><div class="label">Arrived</div><div class="value">' + fmtFull(current.startD) + '</div></div>' +
+      '<div class="stat"><div class="label">Departs</div><div class="value">' + fmtFull(current.endD) + '</div></div>';
     nextHtml = futureAny.length
-      ? 'Next up: <strong>' + futureAny[0].location + '</strong> from ' + fmt(futureAny[0].startD)
+      ? 'Next up: <strong>' + futureAny[0].location + '</strong> from ' + fmtFull(futureAny[0].startD)
       : "Nothing booked after that &mdash; yet.";
   } else if (futureAny.length) {
     heroText = futureAny[0].location;
     kickerEl.textContent = "Next stop";
     statsHtml =
-      '<div class="stat"><div class="label">Arrives</div><div class="value">' + fmt(futureAny[0].startD) + '</div></div>' +
-      '<div class="stat"><div class="label">Through</div><div class="value">' + fmt(futureAny[0].endD) + '</div></div>';
+      '<div class="stat"><div class="label">Arrives</div><div class="value">' + fmtFull(futureAny[0].startD) + '</div></div>' +
+      '<div class="stat"><div class="label">Through</div><div class="value">' + fmtFull(futureAny[0].endD) + '</div></div>';
     nextHtml = "Between stops right now &mdash; whereabouts unconfirmed.";
   } else {
     heroText = "Off the board";
@@ -318,7 +331,7 @@
   if (future.length) {
     manifestLabelEl.textContent = "Upcoming (next 30 days)";
     manifestEl.innerHTML = future.map(e =>
-      '<div class="manifest-row"><span class="range">' + fmt(e.startD) + ' &ndash; ' + fmt(e.endD) + '</span><span class="place">' + e.location + '</span></div>'
+      '<div class="manifest-row"><span class="range">' + fmtFull(e.startD) + ' &ndash; ' + fmtFull(e.endD) + '</span><span class="place">' + e.location + '</span></div>'
     ).join("");
   }
 
@@ -340,7 +353,7 @@
   function categoryForLocation(loc) {
     const l = (loc || "").toLowerCase();
     if (l.includes("nyc") || l.includes("new york") || l.includes("brooklyn")) return "nyc";
-    if (l.includes("carmel")) return "carmel";
+    if (l.includes("carmel") || l.includes("upstate") || l.includes("hudson")) return "carmel";
     if (l.includes("maine")) return "maine";
     return null;
   }
