@@ -282,6 +282,13 @@
   function fmtFull(d) {
     return '<span class="wk">' + fmtWeekday(d) + '</span> ' + fmt(d);
   }
+  // Stored end dates are exclusive (checkout-day) boundaries used for range math;
+  // displayed end dates should read as the last day actually there, so show end minus one day.
+  function lastDay(d) {
+    const r = new Date(d);
+    r.setDate(r.getDate() - 1);
+    return r;
+  }
 
   const evs = events.map(e => ({ ...e, startD: toDate(e.start), endD: toDate(e.end) }));
   const today = new Date();
@@ -306,7 +313,7 @@
     kickerEl.textContent = "Right now";
     statsHtml =
       '<div class="stat"><div class="label">Arrived</div><div class="value">' + fmtFull(current.startD) + '</div></div>' +
-      '<div class="stat"><div class="label">Departs</div><div class="value">' + fmtFull(current.endD) + '</div></div>';
+      '<div class="stat"><div class="label">Departs</div><div class="value">' + fmtFull(lastDay(current.endD)) + '</div></div>';
     nextHtml = futureAny.length
       ? 'Next up: <strong>' + futureAny[0].location + '</strong> from ' + fmtFull(futureAny[0].startD)
       : "Nothing booked after that &mdash; yet.";
@@ -315,7 +322,7 @@
     kickerEl.textContent = "Next stop";
     statsHtml =
       '<div class="stat"><div class="label">Arrives</div><div class="value">' + fmtFull(futureAny[0].startD) + '</div></div>' +
-      '<div class="stat"><div class="label">Through</div><div class="value">' + fmtFull(futureAny[0].endD) + '</div></div>';
+      '<div class="stat"><div class="label">Through</div><div class="value">' + fmtFull(lastDay(futureAny[0].endD)) + '</div></div>';
     nextHtml = "Between stops right now &mdash; whereabouts unconfirmed.";
   } else {
     heroText = "Off the board";
@@ -339,7 +346,7 @@
   if (future.length) {
     manifestLabelEl.textContent = "Upcoming (next 30 days)";
     manifestEl.innerHTML = future.map(e =>
-      '<div class="manifest-row"><span class="range">' + fmtFull(e.startD) + ' &ndash; ' + fmtFull(e.endD) + '</span><span class="place">' + e.location + '</span></div>'
+      '<div class="manifest-row"><span class="range">' + fmtFull(e.startD) + ' &ndash; ' + fmtFull(lastDay(e.endD)) + '</span><span class="place">' + e.location + '</span></div>'
     ).join("");
   }
 
