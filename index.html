@@ -253,10 +253,10 @@
     { start: "2026-06-30", end: "2026-07-12", location: "Carmel" },
     { start: "2026-07-12", end: "2026-07-18", location: "NYC" },
     { start: "2026-07-18", end: "2026-07-26", location: "Maine" },
-    { start: "2026-07-26", end: "2026-07-31", location: "Upstate" },
-    { start: "2026-07-31", end: "2026-08-04", location: "NYC" },
+    { start: "2026-07-26", end: "2026-08-01", location: "Upstate" },
+    { start: "2026-07-31", end: "2026-08-05", location: "NYC" },
     { start: "2026-08-04", end: "2026-08-05", location: "Connecticut" },
-    { start: "2026-08-05", end: "2026-08-11", location: "NYC" },
+    { start: "2026-08-05", end: "2026-08-12", location: "NYC" },
     { start: "2026-08-11", end: "2026-08-21", location: "Upstate" },
     { start: "2026-08-21", end: "2026-09-09", location: "NYC" },
     { start: "2026-09-09", end: "2026-09-20", location: "Upstate" },
@@ -287,7 +287,7 @@
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const current = evs.find(e => today >= e.startD && today < e.endD);
+  const current = evs.findLast(e => today >= e.startD && today < e.endD);
   const futureAny = evs.filter(e => e.startD > today);
   const horizon = new Date(today);
   horizon.setDate(horizon.getDate() + 30);
